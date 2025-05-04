@@ -1,0 +1,60 @@
+#networks
+networks:
+  api:
+    driver: bridge
+# volumes
+volumes:
+  database:
+    driver: local
+
+# serviços
+services:
+    # banco de dados
+    api_mysql_controle_estoque:
+      image: mysql:5.7
+      container_name: api_mysql_controle_estoque
+      command: --innodb-use-native-aio=0
+      volumes:
+      - ./run/var:/var/lib/mysql
+      ports:
+      - "3307:3306"
+      environment:
+        MYSQL_DATABASE: controle_estoque
+        MYSQL_ROOT_PASSWORD: laravel
+      networks:
+        - api
+        
+    api_nginx_controle_estoque:
+      # servidor
+      image: nginx:alpine
+      container_name: api_nginx_controle_estoque
+      restart: unless-stopped
+      tty: true
+      working_dir: /application
+      volumes:
+        - ./backend:/application
+        - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+        - "8182:80"
+      links:
+        - api_mysql_controle_estoque
+      networks:
+        - api
+    # php
+    api_php_controle_estoque:
+      build: 
+        context: .
+        dockerfile: backend/Dockerfile
+      container_name: api_php_controle_estoque
+      restart: unless-stopped
+      tty: true
+      volumes:
+        - ./backend:/application
+      working_dir: /application
+      #command: bash -c script.sh
+      networks:
+        - api
+      depends_on:
+      - api_mysql_controle_estoque
+
+      
