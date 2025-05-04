@@ -18,10 +18,34 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nome',
         'email',
         'password',
     ];
+
+
+    // coloca a primeira letra de cada palavra em maiusculo
+    public function setNomeAttribute(string $nome)
+    {
+        $this->attributes['nome'] = ucfirst($nome);
+    }
+    // Varias movimentações para o mesmo usuário
+    public function movimentacoesUsuario()
+    {
+        return $this->hasMany(Movimentacao::class , 'user_id');
+    }
+
+    // Varias Produtos para o mesmo usuário
+    public function produtosUsuario()
+    {
+        return $this->hasMany(Produto::class , 'user_id');
+    }
+
+    // Varias Categorias para o mesmo usuário
+    public function categoriasUsuario()
+    {
+        return $this->hasMany(Categoria::class , 'user_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
