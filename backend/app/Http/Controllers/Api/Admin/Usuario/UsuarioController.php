@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api\Usuario;
+namespace App\Http\Controllers\Api\Admin\Usuario;
 
+use App\Http\Controllers\Api\Admin\BaseController;
 use App\Service\Persistencia;
 use App\Models\User;
-use App\Http\Controllers\Api\Estoque\BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
