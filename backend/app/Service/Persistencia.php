@@ -24,7 +24,7 @@ class Persistencia
     // realiza o retorno de um objeto
     public function consultarPorId(int $id): object
     {
-        return $this->classe::findOrFail($id);
+        return $this->classe::where('id', $id)->first();
     }
     // deleta um objeto de forma logica
     public function deletar(int $id): int

@@ -17,7 +17,8 @@ class CategoriaController extends BaseController
     public function validarCampos()
     {
         return [
-            'nome' => 'required|max:255|min:3'
+            'nome' => 'required|max:255|min:3',
+            'user_id' => 'required',
         ];
     }
 }

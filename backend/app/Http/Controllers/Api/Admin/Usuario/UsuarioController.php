@@ -27,7 +27,7 @@ class UsuarioController extends BaseController
                 $request,
                 [
                     'nome' => 'required|max:255|min:3',
-                    'email' => ['required', Rule::unique('usuarios')->ignore($request->input('email')), 'max:255'],
+                    'email' => ['required', Rule::unique('users')->ignore($request->input('email')), 'max:255'],
                     'password' => 'required|max:16|min:6'
                 ]
             );

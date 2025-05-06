@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Admin\Usuario\UsuarioController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Admin\Categoria\CategoriaController;
+use App\Http\Controllers\Api\Admin\Produto\ProdutoController;
+use App\Http\Controllers\Api\Admin\Movimentacao\MovimentacaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,26 +20,45 @@ use App\Http\Controllers\Api\Auth\AuthController;
 */
 
 // cadastra um novo usuario
-Route::group(['prefix' => 'novo_usuario'], function () {
-    Route::post('cadastrar', [UsuarioController::class,'cadastrarUsuario']);
+Route::group(['prefix' => 'registrar_usuario'], function () {
+    Route::post('cadastrar', [UsuarioController::class, 'cadastrarUsuario']);
 });
 
 
 Route::group(['prefix' => 'auth'], function () { //usuarioLogado
-    Route::post('login', [AuthController::class,'login']);
-
+    Route::post('login', [AuthController::class, 'login']);
 });
+// proteção no grupo de rotas
+Route::middleware('auth:sanctum')->group(function () {
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::group(['prefix' => 'usuario'], function () {
-
+        Route::put('atualizar/{id}', [UsuarioController::class, 'atualizarUsuario']);
+        Route::get('consultar/{id}', [UsuarioController::class, 'consultar']);
+        Route::get('listar', [UsuarioController::class, 'listar']);
+        Route::delete('deletar/{id}', [UsuarioController::class, 'deletar']);
     });
 
-    Route::group(['prefix' => 'estoque'], function () {
+    Route::group(['prefix' => 'categoria'], function () {
+        Route::post('cadastrar', [CategoriaController::class, 'cadastrar']);
+        Route::put('atualizar/{id}', [CategoriaController::class, 'atualizar']);
+        Route::get('consultar/{id}', [CategoriaController::class, 'consultar']);
+        Route::get('listar', [CategoriaController::class, 'listar']);
+        Route::delete('deletar/{id}', [CategoriaController::class, 'deletar']);
+    });
 
+    Route::group(['prefix' => 'produto'], function () {
+        Route::post('cadastrar', [ProdutoController::class, 'cadastrar']);
+        Route::put('atualizar/{id}', [ProdutoController::class, 'atualizar']);
+        Route::get('consultar/{id}', [ProdutoController::class, 'consultar']);
+        Route::get('listar', [ProdutoController::class, 'listar']);
+        Route::delete('deletar/{id}', [ProdutoController::class, 'deletar']);
     });
 
     Route::group(['prefix' => 'movimentacao'], function () {
-
+        Route::post('gerar', [MovimentacaoController::class, 'registrarMovimentacaoEstoque']);
+        Route::put('atualizar/{id}', [MovimentacaoController::class, 'atualizar']);
+        Route::get('consultar/{id}', [MovimentacaoController::class, 'consultar']);
+        Route::get('listar', [MovimentacaoController::class, 'listar']);
+        Route::delete('deletar/{id}', [MovimentacaoController::class, 'deletar']);
     });
 });
