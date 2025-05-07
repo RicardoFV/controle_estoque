@@ -1,4 +1,4 @@
-# Estoque de Produtos - API
+# Controle de Estoque - API
 
 Este projeto é uma API para gerenciamento de estoque de produtos, incluindo funcionalidades para cadastro, autenticação, gerenciamento de categorias, produtos e movimentações de estoque. A API é protegida utilizando autenticação via Sanctum.
 
