@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Admin\Movimentacao;
 
 use App\Http\Controllers\Api\Admin\BaseController;
 use App\Service\Persistencia;
-use App\Models\{Produto,Movimentacao};
+use App\Models\{Produto, Movimentacao};
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\QueryException;
@@ -21,35 +21,30 @@ class MovimentacaoController extends BaseController
     }
 
 
-    public function registrarMovimentacaoEstoque(Request $request)
+    public function registrarMovimentacaoEstoque(Request $request): object
     {
         try {
 
             $this->validate($request, $this->validacaoCampos);
-            $movimentacao = $this->persistencia->cadastrar($request->all());
 
             $produto = $this->persistenciaProduto->consultarPorId($request->post('produto_id'));
 
-            if ($movimentacao) {
+            $quantidade = $this->tratarMovimentacao(
+                $request->post('tipo'),
+                $produto->quantidade,
+                $request->post('quantidade')
+            );
+            if ($quantidade >= 0) {
+                $this->persistenciaProduto->atualizar(
+                    [
+                        'quantidade' => $quantidade
+                    ],
 
-                if ($movimentacao->tipo === 'entrada') {
-                    $quantidade = $produto->quantidade + $request->post('quantidade');
-                    $this->persistenciaProduto->atualizar(
-                        [
-                            'quantidade' => $quantidade
-                        ],
-                        $produto->id
-                    );
-                }
-                if ($movimentacao->tipo == 'saida') {
-                    $quantidade = $produto->quantidade - $request->post('quantidade');
-                    $this->persistenciaProduto->atualizar(
-                        [
-                            'quantidade' => $quantidade
-                        ],
-                        $produto->id
-                    );
-                }
+                    $produto->id
+                );
+
+                $movimentacao = $this->persistencia->cadastrar($request->all());
+
                 // retorna a resposta
                 return response()
                     ->json([
@@ -57,11 +52,12 @@ class MovimentacaoController extends BaseController
                         'mensagem' => 'Success',
                         'status' => Response::HTTP_CREATED
                     ]);
+
             }
             // retorna a resposta
             return response()
                 ->json([
-                    'resposta' => 'Erro ao Atualizar',
+                    'resposta' => 'Erro ao Registrr Movimentação, Verifique o estoque !',
                     'mensagem' => 'Success',
                     'status' => Response::HTTP_NO_CONTENT
                 ]);
@@ -72,6 +68,31 @@ class MovimentacaoController extends BaseController
             );
         }
     }
+
+    public function mostrarMovimentacaoPorProduto(int $id): object
+    {
+        return Movimentacao::with('produto')->where('produto_id', $id)->get();
+
+    }
+
+    // trata a movimentação do estoque
+    private function tratarMovimentacao(String $tipo, int $quantidadeProduto, int $quantidadeInformada): int
+    {
+        $quantidade = 0;
+
+        if ($tipo === 'entrada') {
+
+            $quantidade = $quantidadeProduto + $quantidadeInformada;
+        }
+        if ($tipo == 'saida') {
+
+
+            $quantidade = $quantidadeProduto - $quantidadeInformada;
+        }
+
+        return $quantidade;
+    }
+
 
     public function validarCampos()
     {

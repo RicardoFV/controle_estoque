@@ -24,4 +24,24 @@ class ProdutoController extends BaseController
             'quantidade' => 'required'
         ];
     }
+
+    public function listarProdutoPorMovimentacao(int $id):object
+    {
+        return Produto::with('movimentacoesProduto')->where('id', $id)->get();
+    }
+
+    public function listarProdutosSemEstoque():object
+    {
+        return Produto::with('movimentacoesProduto')->where('quantidade', 0)->get();
+    }
+
+    public function listarProdutosComEstoque():object
+    {
+        return Produto::with('movimentacoesProduto')->where('quantidade','>', 0)->get();
+    }
+
+    public function listarProdutosPorCategoria(int $id):object
+    {
+        return Produto::where('categoria_id', $id)->get();
+    }
 }

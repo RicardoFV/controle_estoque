@@ -50,14 +50,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('cadastrar', [ProdutoController::class, 'cadastrar']);
         Route::put('atualizar/{id}', [ProdutoController::class, 'atualizar']);
         Route::get('consultar/{id}', [ProdutoController::class, 'consultar']);
+        Route::get('por_categoria/{id}', [ProdutoController::class, 'listarProdutosPorCategoria']);
+        Route::get('movimentacao/{id}', [ProdutoController::class, 'listarProdutoPorMovimentacao']);
+        Route::get('sem_estoque', [ProdutoController::class, 'listarProdutosSemEstoque']);
+        Route::get('com_estoque', [ProdutoController::class, 'listarProdutosComEstoque']);
         Route::get('listar', [ProdutoController::class, 'listar']);
-        Route::delete('deletar/{id}', [ProdutoController::class, 'deletar']);
     });
 
     Route::group(['prefix' => 'movimentacao'], function () {
         Route::post('gerar', [MovimentacaoController::class, 'registrarMovimentacaoEstoque']);
-        Route::put('atualizar/{id}', [MovimentacaoController::class, 'atualizar']);
-        Route::get('consultar/{id}', [MovimentacaoController::class, 'consultar']);
+        Route::get('movimentacaoes/{id}', [MovimentacaoController::class, 'mostrarMovimentacaoPorProduto']);
         Route::get('listar', [MovimentacaoController::class, 'listar']);
         Route::delete('deletar/{id}', [MovimentacaoController::class, 'deletar']);
     });
